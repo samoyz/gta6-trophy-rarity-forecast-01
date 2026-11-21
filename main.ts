@@ -248,4 +248,9 @@ for (const file of inputs) {
   });
 
   writeFileSync(join(OUTPUT_DIR, `${id}.out`), `${JSON.stringify({ trophies })}\n`);
+  // Per-case diagnostic on stderr: median q50 and median implied spread.
+  const median = (xs: number[]): number => xs.sort((a, b) => a - b)[Math.floor(xs.length / 2)]!;
+  const medQ50 = median(trophies.map((t) => t.q[2]!));
+  const medSpread = median(trophies.map((t) => (logit(t.q[3]!) - logit(t.q[1]!)) / (2 * 0.674)));
+  console.error(`case ${id}: ${trophies.length} trophies, median q50 ${round4(medQ50)}%, median spread ${round4(medSpread)} logit`);
 }
