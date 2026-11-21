@@ -160,6 +160,13 @@ for (const file of inputs) {
     throw new Error(`${file} asks for levels ${JSON.stringify(c.levels)}, not ${JSON.stringify(LEVELS)}`);
   }
   if (c.history.length === 0) throw new Error(`${file} has no history`);
+  // Every read must carry one rate per trophy; a short or long row would
+  // silently misalign the trophies that follow it.
+  for (let ri = 0; ri < c.history.length; ri++) {
+    if (c.history[ri]!.rates.length !== c.trophies.length) {
+      throw new Error(`${file} read ${ri} has ${c.history[ri]!.rates.length} rates, not ${c.trophies.length}`);
+    }
+  }
   const checkpointMs = Date.parse(c.at);
   const targetHours = hoursSinceLaunch(c.target);
   const xTarget = Math.log(1 + targetHours);
